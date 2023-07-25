@@ -23,3 +23,11 @@ class Choice(models.Model):
 
     def __str__(self):
         return self.choice_text
+    
+class Vote_count(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+    vote_count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.vote_count

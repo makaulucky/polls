@@ -5,9 +5,15 @@ from django.utils import timezone
 import datetime
 from .models import Question, Choice
 
+admin.site.site_header = "Admin | Insquare Technologies ~ Polls"
+admin.site.site_title = "Insquare Admin"
+admin.site.index_title = "Welcome to Insquare Technologies ~ Polls"
+
+
 class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 3
+
 
 class QuestionAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -15,7 +21,7 @@ class QuestionAdmin(admin.ModelAdmin):
         ('Date information', {'fields': ['pub_date'], 'classes': ['collapse']}),
     ]
     inlines = [ChoiceInline]
-    list_display = ('question_text', 'pub_date', 'was_published_recently')
+    list_display = ('question_text', 'pub_date', 'was_published_recently', 'total_votes')
     list_filter = ["pub_date"]
     search_fields = ["question_text"]
 
@@ -28,7 +34,10 @@ class QuestionAdmin(admin.ModelAdmin):
         now = timezone.now()
         return now - datetime.timedelta(days=1) <= obj.pub_date <= now
 
+    def total_votes(self, obj):
+        return sum(choice.votes for choice in obj.choice_set.all())
+
+    total_votes.short_description = "Total Votes"
+
+
 admin.site.register(Question, QuestionAdmin)
-admin.site.site_header = "Admin | Insquare Technologies ~ Polls"
-admin.site.site_title = "Insquare Admin"
-admin.site.index_title = "Welcome to Insquare Technologies ~ Polls"
